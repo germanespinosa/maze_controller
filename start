@@ -1,0 +1,9 @@
+#!/bin/bash
+if [ -f "pycharm_term" ]; then
+  echo "Running terminal startup script..."
+  ./pycharm_term
+  bash
+else
+  bash
+fi
+#sshpass -p raspberry ssh pi@192.168.137.100

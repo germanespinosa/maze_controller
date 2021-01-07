@@ -1,0 +1,21 @@
+Raspberry low level commands (WEBBROWSER!)
+
+Maze 1 : http://192.168.137.100:8081/
+Maze 2 : http://192.168.137.200:8081/
+
+http://192.168.137.100:8081/command/param1/param2
+
+commands :
+    servo : moves the door a bit
+        param1 : door number
+        param2 : direction (1 open, -1 close)
+
+    toggle : opens if closed closes if opened
+        param1 : door number
+
+    feeder : activates the feeder
+
+    end : ends the program
+
+
+

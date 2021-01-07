@@ -1,0 +1,18 @@
+2020-11-12 15:26:10.269963	1	closing door 0
+2020-11-12 15:26:10.534955	2	error closing door 0. Expected state 'open', received state 'unknown command!'
+2020-11-12 15:26:10.535500	3	closing door 1
+2020-11-12 15:26:10.982878	4	door 1 closed
+2020-11-12 15:26:10.983514	5	closing door 2
+2020-11-12 15:26:11.168804	6	door 2 closed
+2020-11-12 15:26:11.169580	7	closing door 3
+2020-11-12 15:26:11.333667	8	error closing door 3. Expected state 'open', received state 'unknown command!'
+2020-11-12 15:26:11.514224	9	started experiment test2-20201112
+2020-11-12 15:26:45.187754	10	feeder 1 reached (1)
+2020-11-12 15:26:45.188434	11	closing door 0
+2020-11-12 15:26:45.782522	12	error closing door 0. Expected state 'open', received state 'unknown command!'
+2020-11-12 15:26:45.783184	13	closing door 1
+2020-11-12 15:26:45.883172	14	door 1 closed
+2020-11-12 15:26:45.883785	15	opening door 2
+2020-11-12 15:26:46.567864	16	door 2 opened
+2020-11-12 15:26:46.568521	17	opening door 3
+2020-11-12 15:26:46.749389	18	error opening door 3. Expected state 'open', received state 'unknown command!'
