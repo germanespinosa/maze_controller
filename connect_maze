@@ -1,0 +1,6 @@
+#!/bin/bash
+
+mkdir ~/maze_1 -p
+sshfs -o password_stdin pi@192.168.137.100:/home/pi ~/maze_1 <<< 'raspberry'
+mkdir ~/maze_2 -p
+sshfs -o password_stdin pi@192.168.137.200:/home/pi ~/maze_2 <<< 'raspberry'
