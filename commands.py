@@ -1,4 +1,4 @@
-
+import sys
 commands = dict()
 
 commands["exit"] = dict()
@@ -78,6 +78,18 @@ error_message = "Command '%s' not found"
 
 maze_controller = None
 
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+
+def console_output(result):
+    if result["code"]:
+        eprint(result["message"])
+    else:
+        print(result["message"])
+
+
 def process_command(cmd, controller):
     global maze_controller
     maze_controller = controller
@@ -140,45 +152,39 @@ def cmd_help(command_name=""):
 
 def cmd_open(door_number):
     global maze_controller
-    maze_controller.open_door(door_number)
-    print("opening door %d" % door_number)
+    console_output(maze_controller.open_door(door_number))
 
 
 def cmd_close(door_number):
     global maze_controller
-    maze_controller.close_door(door_number)
-    print("closing door %d" % door_number)
+    console_output(maze_controller.close_door(door_number))
 
 
-def cmd_start(experiment_name, duration = -1):
+def cmd_start(experiment_name, duration=-1):
     global maze_controller
-    maze_controller.start_experiment(experiment_name)
-    print("starting experiment %s for %d minutes" % (experiment_name, duration))
+    console_output(maze_controller.start_experiment(experiment_name,duration))
 
 
 def cmd_end():
     global maze_controller
-    maze_controller.end_experiment()
-    print("ending current experiment")
+    console_output(maze_controller.end_experiment())
 
 
 def cmd_exit():
     global maze_controller
-    maze_controller.quit()
-    print("good bye!")
+    console_output(maze_controller.quit())
     quit()
 
 
 def cmd_status():
-    print("all ok")
+    console_output(maze_controller.status())
 
 
 def cmd_track(agent_name, x, y):
     global maze_controller
-    maze_controller.track(agent_name, x, y)
+    console_output(maze_controller.track(agent_name, x, y))
 
 
 def cmd_feeder (feeder_number):
     global maze_controller
-    maze_controller.activate_feeder(feeder_number)
-    print("activating feeder %d" % feeder_number)
+    console_output(maze_controller.activate_feeder(feeder_number))

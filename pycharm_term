@@ -1,6 +1,6 @@
 #!/bin/bash
-fusermount -u ~/maze_1 2> /dev/null
-fusermount -u ~/maze_2 2> /dev/null
-rm ~/maze_1 -r
-rm ~/maze_2 -r
-~/connect_maze
+fusermount -u /maze/maze_1 2> /dev/null
+fusermount -u /maze/maze_2 2> /dev/null
+rm /maze/maze_1 -r
+rm /maze/maze_2 -r
+/maze/maze/connect_maze

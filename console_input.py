@@ -31,8 +31,9 @@ def console_input(title):
             if char_ord == 13:
                 print()
                 result = "".join(text)
-                with open(".console_history", "a+") as f:
-                    f.write(result + "\n")
+                if text != console_history[-1]:
+                    with open(".console_history", "a+") as f:
+                        f.write(result + "\n")
                 return result
             elif char_ord == 127 and curr > 0:
                 text = text[:curr-1] + text[curr:]

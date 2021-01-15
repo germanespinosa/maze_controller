@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+sudo apt install sshfs sshpass -y
+
+sudo pip3 install web.py
+
+sudo pip3 install readchar
