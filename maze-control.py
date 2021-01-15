@@ -3,7 +3,7 @@ import web
 import log
 from console_input import console_input
 import json
-from door_control import open_door, close_door, activate_feeder
+from door_control import open_door, close_door, activate_feeder, init_doors
 from datetime import datetime
 
 feeder_counters = [0, 0]
@@ -15,13 +15,15 @@ urls = (
 )
 app = web.application(urls, globals())
 
+init_doors()
+
 
 def response (code, message):
     return {"code": code, "message": message}
 
 
-class maze_control:
 
+class maze_control:
     def activate_feeder(self, n):
         if n not in [1, 2]:
             return response(1, "wrong feeder number (%d)" % n)
@@ -50,7 +52,7 @@ class maze_control:
             code = 0
             if experiment[3] > 0:
                 n = experiment[3] * 60 - (datetime.now() - experiment[2]).seconds
-                if n<= 0:
+                if n <= 0:
                     message = "experiment %s finishing" % experiment[1]
                 else:
                     message = "experiment %s in progress" % experiment[1]
@@ -60,6 +62,16 @@ class maze_control:
         else:
             code = 1
             message = "no active experiment"
+
+        import pi_status
+        for address in pi_status.pi_addresses:
+            message += "\nPi at %s: " % address
+            ps = pi_status.get_status(address)
+            message += "ok\n"
+            for door_status in ps["door_status"]:
+                message += ("door %d: " % door_status["door_number"]) + door_status["state"] + "\n"
+            message += ("feeder %d: " % ps["feeder_status"]["feeder_number"]) + ps["feeder_status"]["state"]
+
         return response(code, message)
 
     def feeder(self, feeder_number):
@@ -70,11 +82,11 @@ class maze_control:
         message = ""
         if feeder_number == 1:
             if experiment[0]:
-                print (experiment)
+                print(experiment)
                 if experiment[3] > 0:
                     n = experiment[3] * 60 - (datetime.now() - experiment[2]).seconds
-                    print (n)
-                    if n<=0:
+                    print(n)
+                    if n <= 0:
                         experiment[0] = False
             if experiment[0]:
                 self.close_door(1)

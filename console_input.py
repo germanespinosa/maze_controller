@@ -31,7 +31,7 @@ def console_input(title):
             if char_ord == 13:
                 print()
                 result = "".join(text)
-                if text != console_history[-1]:
+                if len(console_history) == 0 or text != console_history[-1]:
                     with open(".console_history", "a+") as f:
                         f.write(result + "\n")
                 return result
