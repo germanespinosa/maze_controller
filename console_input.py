@@ -35,11 +35,12 @@ def console_input(title):
                     with open(".console_history", "a+") as f:
                         f.write(result + "\n")
                 return result
-            elif char_ord == 127 and curr > 0:
-                text = text[:curr-1] + text[curr:]
-                curr -= 1
-                console_output(title, "".join(text) + " ", insert)
-                console_output(title, "".join(text[:curr]), insert)
+            elif char_ord == 127:
+                if curr > 0:
+                    text = text[:curr-1] + text[curr:]
+                    curr -= 1
+                    console_output(title, "".join(text) + " ", insert)
+                    console_output(title, "".join(text[:curr]), insert)
             else:
                 if curr < len(text):
                     if insert:

@@ -5,7 +5,7 @@ import requests
 
 pi_addresses = []
 with open("pis", "r") as f:
-    pi_addresses += [address.replace("\n", "") for address in f.readlines()]
+    pi_addresses = json.load(f)
 
 
 def get_status(pi_address):

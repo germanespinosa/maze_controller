@@ -1,4 +1,5 @@
 import sys
+
 commands = dict()
 
 commands["exit"] = dict()
