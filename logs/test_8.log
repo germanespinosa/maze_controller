@@ -1,9 +1,0 @@
-2020-11-16 16:46:18.313295	1684	started experiment test_8
-2020-11-16 16:46:18.313657	1685	closing door 0
-2020-11-16 16:46:21.878672	1686	error closing door 0. status code 500
-2020-11-16 16:46:21.879491	1687	closing door 1
-2020-11-16 16:46:24.951793	1688	error closing door 1. status code 500
-2020-11-16 16:46:24.952478	1689	closing door 2
-2020-11-16 16:46:26.378730	1690	error closing door 2. status code 500
-2020-11-16 16:46:26.379400	1691	closing door 3
-2020-11-16 16:46:27.947892	1692	error closing door 3. status code 500

@@ -1,13 +1,11 @@
-from habitat import Habitat
-
+from rest import Call
 
 class Remote:
     def __init__(self, address):
         self.address = address
 
     def call (self, action, parameters = []):
-        uri = self.address + "/" + action + "/" + "/".join([str(p) for p in parameters])
-        return from_response(Call.get(address, action, parameters))
+        return Call.get(self.address, action, parameters)
 
     def activate_feeder(self, n):
         return self.call("activate_feeder", [n])
@@ -30,8 +28,12 @@ class Remote:
     def start_experiment(self, experiment_name, duration=0):
         return self.call("start_experiment", [experiment_name, duration])
 
-    def end_experiment(self):
-        return self.call("end_experiment")
+    def finish_experiment(self):
+        return self.call("finish_experiment")
 
     def track(self, agent, x, y):
         return self.call("track", [agent, x, y])
+
+    def end(self):
+        return self.call("end")
+

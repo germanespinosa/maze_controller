@@ -3,6 +3,7 @@ from console_input import console_input
 import time
 import commands
 
+
 time.sleep(2)
 print("Maze controller console")
 print("-----------------------")
@@ -11,5 +12,4 @@ experiment = Experiment()
 cmd = ""
 while cmd!="exit":
     cmd = console_input("maze" + (":" + experiment.name if experiment.is_active() else ""))
-
-#    commands.process_command(cmd, mc)
+    commands.process_command(cmdc)

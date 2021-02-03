@@ -27,18 +27,21 @@ class Habitat:
 
     def status(self):
         s = self.experiment.status()
-        message = ""
-        for pi in Pi.get_pis():
-            message += "\nPi at %s: " % pi.address
-            ps = pi.get("status")
-            if ps.code:
-                message += "error\n"
-            else:
-                message += "ok\n"
-                for door_status in ps.content["door_status"]:
-                    message += ("door %d: " % door_status["door_number"]) + door_status["state"] + "\n"
-                message += ("feeder %d: " % ps.content["feeder_status"]["feeder_number"]) + ps.content["feeder_status"]["state"]
-        return Result(0, message)
+        if s.code == 0:
+            message = s.message
+            for pi in Pi.get_pis():
+                message += "\nPi at %s: " % pi.address
+                ps = pi.get("status")
+                if ps.code:
+                    message += "error\n"
+                else:
+                    message += "ok\n"
+                    for door_status in ps.content["door_status"]:
+                        message += ("door %d: " % door_status["door_number"]) + door_status["state"] + "\n"
+                    message += ("feeder %d: " % ps.content["feeder_status"]["feeder_number"]) + ps.content["feeder_status"]["state"]
+            return Result(0, message)
+        else:
+            return s
 
     def feeder_reached(self, feeder_number):
         if feeder_number not in [1, 2]:

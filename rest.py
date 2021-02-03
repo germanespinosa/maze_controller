@@ -8,13 +8,18 @@ class Result:
         self.content = content
 
     def json(self):
-        return {"code": self.code, "message": self.message, "content": self.content}.__repr__()
+        o = {"code": self.code, "message": self.message}
+        if self.content:
+            o["content"] = self.content
+        return json.dumps(o)
+
     def from_response(response):
         if response.status_code == 200:
             j = json.loads(response.text)
             return Result(j["code"], j["message"], j["content"] if "content" in j else None)
         else:
             return Result(response.status_code, "Failed to connect to remote host")
+
     def __repr__(self):
         return self.json()
 
