@@ -4,12 +4,12 @@ from remote import Remote
 
 
 class Commands:
-    def __init__(self):
+    def __init__(self, address="0.0.0.0:8080"):
         self.commands = {}
         with open("commands.config") as f:
             self.commands = json.load(f)
         self.error_message = "Command '%s' not found"
-        self.habitat_remote = Remote("0.0.0.0:8080")
+        self.habitat_remote = Remote(address)
 
     def eprint(*args, **kwargs):
       print(*args, file=sys.stderr, **kwargs)
@@ -28,7 +28,7 @@ class Commands:
             return
         command = parts[0]
         if command not in self.commands:
-            print(error_message % command)
+            print(self.error_message % command)
             return
         params = ""
         first = True
@@ -104,8 +104,8 @@ class Commands:
 
 
     def track(self, agent_name, x, y):
-        console_output(self.habitat_remote.track(agent_name, x, y))
+        self.console_output(self.habitat_remote.track(agent_name, x, y))
 
 
     def enable_feeder (self, feeder_number):
-        console_output(self.habitat_remote.enable_feeder(feeder_number))
+        self.console_output(self.habitat_remote.enable_feeder(feeder_number))
