@@ -47,7 +47,7 @@ class Experiment:
         self.agents_locations[agent] = coordinates
         step = {"time_stamp": (datetime.now()-self.current_episode_start_time).total_seconds(), "agent_name": agent, "coordinates": coordinates}
         self.episodes[-1]["trajectories"].append(step)
-        return Result(0, "agent %s coordinates recorded" % agent, step)
+        return Result(0, "%s coordinates recorded" % agent, step)
 
     def running_time(self):
         date_diff = datetime.now() - self.start_time

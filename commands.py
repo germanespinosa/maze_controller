@@ -22,6 +22,7 @@ class Commands:
             print(result.message)
 
     def process_command(self, cmd):
+        print (cmd)
         parts = cmd.split(" ")
         if len(parts) == 0 or cmd.strip() == "":
             return
