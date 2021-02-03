@@ -2,9 +2,12 @@ import sys
 import json
 from remote import Remote
 
-
 class Commands:
     def __init__(self, address="0.0.0.0:8080"):
+        if (':' in address):
+            self.port = address.split(":")[1]
+        else:
+            self.port = "8080"
         self.commands = {}
         with open("commands.config") as f:
             self.commands = json.load(f)
@@ -20,6 +23,12 @@ class Commands:
             self.eprint(result.message)
         else:
             print(result.message)
+
+    def start(self, port=None):
+        if not port:
+            port = self.port
+        os.system("python3 server.py " + port + "&")
+        self.console_output("Server")
 
     def process_command(self, cmd):
         print (cmd)

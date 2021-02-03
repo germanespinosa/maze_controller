@@ -4,7 +4,6 @@ import os
 
 os.system("python3 server.py 8080&")
 time.sleep(4)
-
 print("API TEST STARTED")
 
 print (requests.get("http://0.0.0.0:8080/start_experiment/test_api/1").text)
