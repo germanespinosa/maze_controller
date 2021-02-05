@@ -3,7 +3,7 @@ import glob
 
 processes = {}
 
-for test_file in glob.glob("tests/*"):
+for test_file in glob.glob("tests/test_*"):
     test_name = test_file.split("/")[1].replace("test_","").replace(".py","")
     processes[test_name] = subprocess.Popen(['python3', test_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
