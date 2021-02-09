@@ -1,11 +1,19 @@
-from rest import Call
+import time
+import os
+from rest import Call, Result
 
 class Remote:
     def __init__(self, address):
         self.address = address
 
-    def call (self, action, parameters = []):
+    def call (self, action, parameters=[]):
         return Call.get(self.address, action, parameters)
+
+    def start_server(self):
+        port = self.address.split(":")[1] if ":" in self.address else "8081"
+        os.system("python3 server.py " + port + " 2>/dev/null &")
+        time.sleep(4)
+        return Result(0, "Server started")
 
     def activate_feeder(self, n):
         return self.call("activate_feeder", [n])

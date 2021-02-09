@@ -4,6 +4,7 @@ from experiment import Experiment
 from doors import Doors
 from feeders import Feeders
 from pi import Pi
+import os
 
 class Habitat:
     def __init__(self):

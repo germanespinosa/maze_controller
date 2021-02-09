@@ -2,7 +2,7 @@ import sys
 import json
 from remote import Remote
 
-class Commands:
+class Console:
     def __init__(self, address="0.0.0.0:8080"):
         if (':' in address):
             self.port = address.split(":")[1]
@@ -14,21 +14,17 @@ class Commands:
         self.error_message = "Command '%s' not found"
         self.habitat_remote = Remote(address)
 
-    def eprint(*args, **kwargs):
+    def print_error(*args, **kwargs):
       print(*args, file=sys.stderr, **kwargs)
-
 
     def console_output(self, result):
         if result.code:
-            self.eprint(result.message)
+            self.print_error(result.message)
         else:
             print(result.message)
 
-    def start(self, port=None):
-        if not port:
-            port = self.port
-        os.system("python3 server.py " + port + "&")
-        self.console_output("Server")
+    def start_server(self):
+        self.console_output(self.habitat_remote.start_server())
 
     def process_command(self, cmd):
         print (cmd)
@@ -100,6 +96,8 @@ class Commands:
     def start_experiment(self, experiment_name, duration=-1):
         self.console_output(self.habitat_remote.start_experiment(experiment_name,duration))
 
+    def start_server(self):
+        self.console_output(self.habitat_remote.start_server())
 
     def finish_experiment(self):
         self.console_output(self.habitat_remote.finish_experiment())

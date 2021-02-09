@@ -1,8 +1,7 @@
 import time
 import requests
 import os
-
-os.system("python3 server.py 8080&")
+os.system("python3 server.py 8080  2>/dev/null &")
 time.sleep(4)
 print("API TEST STARTED")
 
