@@ -84,13 +84,13 @@ class Console:
             usage += " " + ("[" if not parameter["mandatory"] else "") + param_name + ( "]" if not parameter["mandatory"] else "" )
         print("usage: %s\n" % usage)
 
-    def open(self, door_number):
+    def open_door(self, door_number):
         self.console_output(self.habitat_remote.open_door(door_number))
 
     def feeder_reached(self, feeder_number):
         self.console_output(self.habitat_remote.feeder_reached(feeder_number))
 
-    def close(self, door_number):
+    def close_door(self, door_number):
         self.console_output(self.habitat_remote.close_door(door_number))
 
     def start_experiment(self, experiment_name, duration=-1):
