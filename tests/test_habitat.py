@@ -7,15 +7,9 @@ for i in range(4):
 
 for i in range(4):
     r = h.open_door(i)
-    if r.code:
-        print(r.message, file=sys.stderr)
-        exit(1)
 
 for i in range(4):
     r = h.close_door(i)
-    if r.code:
-        print(r.message, file=sys.stderr)
-        exit(1)
 
 for e in range(3):
     print (h.feeder_reached(1))

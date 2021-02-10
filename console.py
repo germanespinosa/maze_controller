@@ -1,9 +1,10 @@
 import sys
 import json
 from remote import Remote
+import subprocess
 
 class Console:
-    def __init__(self, address="0.0.0.0:8080"):
+    def __init__(self, address="0.0.0.0:8080", stderr=sys.stderr, tracking_path="../agent_tracking/cmake-build-release/agent_tracking"):
         if (':' in address):
             self.port = address.split(":")[1]
         else:
@@ -12,10 +13,12 @@ class Console:
         with open("commands.config") as f:
             self.commands = json.load(f)
         self.error_message = "Command '%s' not found"
+        self.stderr = stderr
         self.habitat_remote = Remote(address)
+        self.tracking_path = tracking_path
 
-    def print_error(*args, **kwargs):
-      print(*args, file=sys.stderr, **kwargs)
+    def print_error(self, *args, **kwargs):
+      print(*args, file=self.stderr, **kwargs)
 
     def console_output(self, result):
         if result.code:
@@ -27,7 +30,7 @@ class Console:
         self.console_output(self.habitat_remote.start_server())
 
     def process_command(self, cmd):
-        print (cmd)
+        print(cmd)
         parts = cmd.split(" ")
         if len(parts) == 0 or cmd.strip() == "":
             return
@@ -59,7 +62,6 @@ class Console:
                     print("missing mandatory parameter '%'" % param_name)
         eval("self.%s(%s)" % (command, params))
 
-
     def help(self, command_name=""):
         if command_name == "":
             print("Maze help")
@@ -71,7 +73,7 @@ class Console:
             print("\nFor more details: help [command_name]")
             return
         if command_name not in self.commands:
-            print(error_message % command_name)
+            print(self.error_message % command_name)
             return
         print("Maze help")
         print("---------")
@@ -94,6 +96,7 @@ class Console:
         self.console_output(self.habitat_remote.close_door(door_number))
 
     def start_experiment(self, experiment_name, duration=-1):
+
         self.console_output(self.habitat_remote.start_experiment(experiment_name,duration))
 
     def start_server(self):

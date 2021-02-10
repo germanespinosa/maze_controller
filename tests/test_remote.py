@@ -9,10 +9,6 @@ for i in range(4):
 
 for i in range(4):
     r = remote.open_door(i)
-    if r.code:
-        print(r.message, file=sys.stderr)
-        print(remote.end())
-        exit(1)
 
 print(remote.start_experiment("test_remote", 1))
 

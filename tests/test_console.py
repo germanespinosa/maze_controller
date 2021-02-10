@@ -1,6 +1,14 @@
 from console import Console
-commands = Console("0.0.0.0:8082")
+import sys
+commands = Console("0.0.0.0:8082", stderr=sys.stdout)
 print("CONSOLE TEST STARTED")
+commands.process_command("start_server")
+
+for i in range(3):
+    commands.process_command("open_door " + str(i))
+for i in range(3):
+    commands.process_command("close_door " + str(i))
+
 commands.process_command("start_server")
 commands.process_command("start_experiment test_condole 1")
 for e in range(3):
