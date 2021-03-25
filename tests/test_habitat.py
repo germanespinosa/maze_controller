@@ -1,12 +1,11 @@
-exit(0)
 import sys
 from habitat import Habitat
 
 h = Habitat()
 
-h.test_feeder(1,1000,1,0)
+#h.test_feeder(1,1000,1,0)
 
-
+h.start_experiment("test","10_05", 5)
 
 for i in range(4):
     h.close_door(i)

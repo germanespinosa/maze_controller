@@ -48,8 +48,8 @@ class Remote:
     def feeder_reached(self, feeder_number):
         return self.call("feeder_reached", [feeder_number])
 
-    def start_experiment(self, experiment_name, duration=0):
-        return self.call("start_experiment", [experiment_name, duration])
+    def start_experiment(self, experiment_name, world_name, duration=0):
+        return self.call("start_experiment", [experiment_name, world_name, duration])
 
     def finish_experiment(self):
         return self.call("finish_experiment")

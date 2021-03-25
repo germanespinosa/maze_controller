@@ -10,6 +10,7 @@ class Habitat:
         self.experiment = Experiment()
         self.doors = Doors()
         self.feeders = Feeders()
+        self.door_2_open = False
 
     def enable_feeder(self, n):
         return self.feeders.enable(n)
@@ -55,6 +56,7 @@ class Habitat:
                 return self.experiment.experiment_ended()
             else:
                 r = self.experiment.start_episode()
+                self.experiment.check = self.doors.close;
                 self.doors.close(1)
                 self.doors.open(2)
                 self.doors.close(0)
@@ -70,8 +72,9 @@ class Habitat:
             self.feeders.enable(1)
             return r
 
-    def start_experiment(self, experiment_name, duration=0):
-        self.experiment = Experiment(experiment_name, duration)
+    def start_experiment(self, experiment_name, world_name, duration=0):
+
+        self.experiment = Experiment(experiment_name, world_name, duration)
         message = "experiment '%s'" % experiment_name
         if duration > -1:
             message += " for %d minutes" % duration
@@ -97,7 +100,7 @@ class Habitat:
     def finish_experiment(self):
         return self.experiment.finish()
 
-    def track(self, agent, x, y):
+    def track(self, agent, x, y): # do better
         return self.experiment.track_agent(agent, {"x": x, "y": y})
 
     def test_door(self, door_number, repetitions):

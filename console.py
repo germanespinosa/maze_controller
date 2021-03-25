@@ -95,7 +95,7 @@ class Console:
 
     def start_experiment(self, subject_name, world_name, duration, suffix=""):
         experiment_name = str(datetime.now().year) + str("%02d" % datetime.now().month) + str("%02d" % datetime.now().day) + "_" + str("%02d" % datetime.now().hour) + str("%02d" % datetime.now().minute) + "_" + subject_name + "_" + world_name + ("_" + suffix if suffix != "" else "")
-        self.console_output(self.habitat_remote.start_experiment(experiment_name,duration))
+        self.console_output(self.habitat_remote.start_experiment(experiment_name, world_name, duration))
 
     def start_server(self):
         self.console_output(self.habitat_remote.start_server())
@@ -107,6 +107,9 @@ class Console:
         self.console_output(self.habitat_remote.finish_experiment())
 
     def end(self):
+        self.habitat_remote.finish_experiment()
+        self.habitat_remote.feeder_reached(2)
+        self.habitat_remote.feeder_reached(1)
         self.console_output(self.habitat_remote.end())
         quit()
 

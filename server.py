@@ -38,11 +38,12 @@ class Server:
             return self.habitat.test_feeder(feeder_number, duration, repetitions, wait_time).json()
         elif command == "start_experiment":
             experiment_name = qs[1]
-            if len(qs) > 2 and qs[2].isnumeric():
-                duration = int(qs[2])
-                return self.habitat.start_experiment(experiment_name, duration).json()
+            world_name = qs[2]
+            if len(qs) > 3 and qs[3].isnumeric():
+                duration = int(qs[3])
+                return self.habitat.start_experiment(experiment_name, world_name, duration).json()
             else:
-                return self.habitat.start_experiment(experiment_name).json()
+                return self.habitat.start_experiment(experiment_name, world_name).json()
         elif command == "finish_experiment":
             return self.habitat.finish_experiment().json()
         elif command == "save_doors_calibration":
