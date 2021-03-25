@@ -6,7 +6,7 @@ class Remote:
     def __init__(self, address):
         self.address = address
 
-    def call (self, action, parameters=[]):
+    def call(self, action, parameters=[]):
         return Call.get(self.address, action, parameters)
 
     def start_server(self):
@@ -15,14 +15,29 @@ class Remote:
         time.sleep(4)
         return Result(0, "Server started")
 
-    def activate_feeder(self, n):
-        return self.call("activate_feeder", [n])
+    def enable_feeder(self, n):
+        return self.call("enable_feeder", [n])
+
+    def test_feeder(self, feeder_number, duration, repetitions, wait_time):
+        return self.call("test_feeder", [feeder_number,duration, repetitions, wait_time])
+
+    def calibrate_door(self, door_number, direction, opening_time, closing_time):
+        return self.call("calibrate_door", [door_number, direction, opening_time, closing_time])
+
+    def save_doors_calibration(self):
+        return self.call("save_doors_calibration")
+
+    def load_doors_calibration(self):
+        return self.call("load_doors_calibration")
 
     def open_door(self, n):
         return self.call("open_door", [n])
 
     def close_door(self, n):
         return self.call("close_door", [n])
+
+    def test_door(self, door_number, repetitions):
+        return self.call("test_door", [door_number, repetitions])
 
     def quit(self):
         return self.call("quit")

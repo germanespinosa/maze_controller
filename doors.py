@@ -20,3 +20,23 @@ class Doors:
         if door_number not in self.pis.keys():
             return Result(1, "wrong door number (%d)" % door_number)
         return self.pis[door_number].get("close", [door_number])
+
+    def calibrate(self, door_number, direction, opening_time, closing_time):
+        if door_number not in self.pis.keys():
+            return Result(1, "wrong door number (%d)" % door_number)
+        return self.pis[door_number].get("calibrate_door", [door_number, direction, opening_time, closing_time])
+
+    def save_calibration(self):
+        r = ""
+        for pi in self.pis.values():
+            r = pi.get("save_door_calibration")
+        return r
+
+    def load_calibration(self):
+        r = ""
+        for pi in self.pis.values():
+            r = pi.get("load_door_calibration")
+        return r
+
+    def test_door(self, door_number, repetitions):
+        return self.pis[door_number].get("test_door", [door_number, repetitions])

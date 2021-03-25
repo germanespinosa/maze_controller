@@ -7,8 +7,9 @@ time.sleep(2)
 print("Maze controller console")
 print("-----------------------")
 print("type help for more information on available commands")
-commands = Console("")
+commands = Console()
+commands.process_command("start_server")
 cmd = ""
-while cmd!="exit":
+while cmd != "end":
     cmd = console_input("maze:")
     commands.process_command(cmd)

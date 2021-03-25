@@ -52,21 +52,23 @@ class Habitat:
                 self.doors.close(2)
                 self.doors.close(0)
                 self.doors.close(3)
-                return self.experiment.finish()
+                return self.experiment.experiment_ended()
             else:
+                r = self.experiment.start_episode()
                 self.doors.close(1)
                 self.doors.open(2)
                 self.doors.close(0)
                 self.doors.open(3)
                 self.feeders.enable(2)
-                return self.experiment.start_episode()
+                return r
         else:
+            r = self.experiment.finish_episode()
             self.doors.close(3)
             self.doors.open(0)
             self.doors.close(2)
             self.doors.open(1)
             self.feeders.enable(1)
-            return self.experiment.finish_episode()
+            return r
 
     def start_experiment(self, experiment_name, duration=0):
         self.experiment = Experiment(experiment_name, duration)
@@ -80,9 +82,23 @@ class Habitat:
         self.feeders.enable(1)
         return Result(0, message)
 
+    def test_feeder(self, feeder_number, duration, repetitions, wait_time):
+        return self.feeders.test(feeder_number, duration, repetitions, wait_time)
+
+    def calibrate_door(self, door_number, direction, opening_time, closing_time):
+        return self.doors.calibrate(door_number, direction, opening_time, closing_time)
+
+    def save_doors_calibration(self):
+        return self.doors.save_calibration()
+
+    def load_doors_calibration(self):
+        return self.doors.load_calibration()
+
     def finish_experiment(self):
         return self.experiment.finish()
 
     def track(self, agent, x, y):
         return self.experiment.track_agent(agent, {"x": x, "y": y})
 
+    def test_door(self, door_number, repetitions):
+        return self.doors.test_door(door_number,repetitions)

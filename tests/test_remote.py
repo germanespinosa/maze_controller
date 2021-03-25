@@ -1,8 +1,14 @@
+exit(0)
 import sys
 from remote import Remote
 
-remote = Remote("0.0.0.0:8081")
+remote = Remote("0.0.0.0:8084")
+
 print(remote.start_server())
+
+remote.test_feeder(2,1000,1,1)
+
+
 
 for i in range(4):
     r = remote.close_door(i)

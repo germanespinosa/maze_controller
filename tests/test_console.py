@@ -4,6 +4,9 @@ commands = Console("0.0.0.0:8082", stderr=sys.stdout)
 print("CONSOLE TEST STARTED")
 commands.process_command("start_server")
 
+commands.process_command("test_feeder 2 1000 1 1")
+exit(0)
+
 for i in range(3):
     commands.process_command("open_door " + str(i))
 for i in range(3):

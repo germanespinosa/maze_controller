@@ -1,7 +1,13 @@
+exit(0)
 import sys
 from habitat import Habitat
 
 h = Habitat()
+
+h.test_feeder(1,1000,1,0)
+
+
+
 for i in range(4):
     h.close_door(i)
 

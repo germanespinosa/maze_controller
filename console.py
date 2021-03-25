@@ -1,21 +1,20 @@
 import sys
 import json
-from remote import Remote
-import subprocess
+from remote import Remote, Result
+from datetime import datetime
 
 class Console:
-    def __init__(self, address="0.0.0.0:8080", stderr=sys.stderr, tracking_path="../agent_tracking/cmake-build-release/agent_tracking"):
+    def __init__(self, address="0.0.0.0:8081", stderr=sys.stderr):
         if (':' in address):
             self.port = address.split(":")[1]
         else:
-            self.port = "8080"
+            self.port = "8081"
         self.commands = {}
         with open("commands.config") as f:
             self.commands = json.load(f)
         self.error_message = "Command '%s' not found"
         self.stderr = stderr
         self.habitat_remote = Remote(address)
-        self.tracking_path = tracking_path
 
     def print_error(self, *args, **kwargs):
       print(*args, file=self.stderr, **kwargs)
@@ -30,7 +29,6 @@ class Console:
         self.console_output(self.habitat_remote.start_server())
 
     def process_command(self, cmd):
-        print(cmd)
         parts = cmd.split(" ")
         if len(parts) == 0 or cmd.strip() == "":
             return
@@ -43,7 +41,7 @@ class Console:
         param_index = 1
         if len(parts) - 1 > len(self.commands[command]["parameters"]):
             print("Too many parameters (received %s, expected %s)." %(len(parts) - 1, len(self.commands[command]["parameters"])))
-            self.cmd_help(command)
+            self.help(command)
             return
         for param_name in self.commands[command]["parameters"].keys():
             param = self.commands[command]["parameters"][param_name]
@@ -95,12 +93,15 @@ class Console:
     def close_door(self, door_number):
         self.console_output(self.habitat_remote.close_door(door_number))
 
-    def start_experiment(self, experiment_name, duration=-1):
-
+    def start_experiment(self, subject_name, world_name, duration, suffix=""):
+        experiment_name = str(datetime.now().year) + str("%02d" % datetime.now().month) + str("%02d" % datetime.now().day) + "_" + str("%02d" % datetime.now().hour) + str("%02d" % datetime.now().minute) + "_" + subject_name + "_" + world_name + ("_" + suffix if suffix != "" else "")
         self.console_output(self.habitat_remote.start_experiment(experiment_name,duration))
 
     def start_server(self):
         self.console_output(self.habitat_remote.start_server())
+
+    def test_feeder(self, feeder_number, duration, repetitions, wait_time):
+        self.console_output(self.habitat_remote.test_feeder(feeder_number, duration, repetitions, wait_time))
 
     def finish_experiment(self):
         self.console_output(self.habitat_remote.finish_experiment())
@@ -112,10 +113,20 @@ class Console:
     def status(self):
         self.console_output(self.habitat_remote.status())
 
-
     def track(self, agent_name, x, y):
         self.console_output(self.habitat_remote.track(agent_name, x, y))
 
-
     def enable_feeder (self, feeder_number):
         self.console_output(self.habitat_remote.enable_feeder(feeder_number))
+
+    def calibrate_door(self, door_number, direction, opening_time, closing_time):
+        self.console_output(self.habitat_remote.calibrate_door(door_number, direction, opening_time, closing_time))
+
+    def save_doors_calibration(self):
+        self.console_output(self.habitat_remote.save_doors_calibration())
+
+    def load_doors_calibration(self):
+        self.console_output(self.habitat_remote.load_doors_calibration())
+
+    def test_door(self, door_number, repetitions):
+        self.console_output(self.habitat_remote.test_door(door_number,repetitions))

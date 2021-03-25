@@ -30,6 +30,12 @@ class Server:
         elif command == "feeder_reached":
             feeder_number = int(qs[1])
             return self.habitat.feeder_reached(feeder_number).json()
+        elif command == "test_feeder":
+            feeder_number = int(qs[1])
+            duration = int(qs[2])
+            repetitions = int(qs[3])
+            wait_time = int(qs[4])
+            return self.habitat.test_feeder(feeder_number, duration, repetitions, wait_time).json()
         elif command == "start_experiment":
             experiment_name = qs[1]
             if len(qs) > 2 and qs[2].isnumeric():
@@ -39,6 +45,20 @@ class Server:
                 return self.habitat.start_experiment(experiment_name).json()
         elif command == "finish_experiment":
             return self.habitat.finish_experiment().json()
+        elif command == "save_doors_calibration":
+            return self.habitat.save_doors_calibration()
+        elif command == "load_doors_calibration":
+            return self.habitat.load_doors_calibration()
+        elif command == "test_door":
+            door_number = int(qs[1])
+            repetitions = int(qs[2])
+            return self.habitat.test_door(door_number, repetitions)
+        elif command == "calibrate_door":
+            door_number = int(qs[1])
+            direction = int(qs[2])
+            opening_time = float(qs[3])
+            closing_time = float(qs[4])
+            return self.habitat.calibrate_door (door_number, direction, opening_time, closing_time)
         elif command == "track":
             agent = qs[1]
             x = int(qs[2])

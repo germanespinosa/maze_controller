@@ -1,10 +1,12 @@
+
+console_history_file_path = "~.console_history"
 def console_input(title):
     import readchar
     import sys
     import os.path
 
-    if os.path.exists(".console_history"):
-        console_history = [[c for c in x.replace("\n", "")] for x in open(".console_history", "r").readlines()]
+    if os.path.exists(console_history_file_path):
+        console_history = [[c for c in x.replace("\n", "")] for x in open(console_history_file_path, "r").readlines()]
     else:
         console_history = []
 
@@ -32,7 +34,7 @@ def console_input(title):
                 print()
                 result = "".join(text)
                 if len(console_history) == 0 or text != console_history[-1]:
-                    with open(".console_history", "a+") as f:
+                    with open(console_history_file_path, "a+") as f:
                         f.write(result + "\n")
                 return result
             elif char_ord == 127:
