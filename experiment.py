@@ -1,15 +1,13 @@
-import os
 import json
 from rest import Result
 from datetime import datetime
-from app_comm import App_comm
 from world import World
 from map import Map
 
 class Experiment:
-    def __init__(self, name="", world_name="", duration_minutes=0, videos_folder="videos", tracking_path="/maze/agent_tracking/cmake-build-release/agent_tracker"):
-        self.active = True
+    def __init__(self, name="", world_name="", duration_minutes=0):
         self.name = name
+        self.active = False
         if world_name != "":
             self.world = World("hexa_" + world_name)
             self.map = Map(self.world)
@@ -20,33 +18,19 @@ class Experiment:
         self.trajectories = []
         self.current_episode_start_time = None
         self.episodes = []
-        self.tracker = None
-        if name != "":
-            self.video_folder = videos_folder + "/" + name
-            if not os.path.exists(self.video_folder):
-                os.makedirs(self.video_folder)
-            self.tracker = App_comm([tracking_path,
-                                     "experiment",
-                                     "view"], self.process_tracking)
+
+    def start(self):
+        self.active = True
 
 
     def active_episode(self):
         return not self.current_episode_start_time is None
 
     def start_episode(self):
-        if self.tracker:
-            self.tracker.write(self.video_folder + "/" + self.name + "_ep" + ('%02d' % len(self.episodes)))
         self.agents_locations = {}
         self.current_episode_start_time = datetime.now()
         self.episodes.append({"trajectories": [], "start_time": str(self.current_episode_start_time), "time_stamp": ( self.current_episode_start_time-self.start_time).total_seconds()})
         return Result(0, "episode %d started" % len(self.episodes))
-
-    def process_tracking(self, content):
-        tracking = json.loads(content)
-        frame = tracking["frame"]
-        coordinates = tracking["detection_coordinates"]["coordinates"]
-        agent = tracking["detection_coordinates"]["detection_location"]["profile"]["agent_name"]
-        self.track_agent(agent,coordinates,frame)
 
     def write(self):
         e = {"name": self.name, "start_time": str(self.start_time), "duration": self.duration}
@@ -57,14 +41,14 @@ class Experiment:
             json.dump(e, outfile)
 
     def finish_episode(self):
-        self.tracker.write("end")
-        if not self.current_episode_start_time:
+        if not self.active_episode():
             return Result(1,"there is not any active episode")
         self.episodes[-1]["end_time"] = str(datetime.now())
         self.current_episode_start_time = None
+        self.write()
         return Result(0, "episode %d finished" % len(self.episodes))
 
-    def track_agent(self, agent, coordinates, frame=-1):
+    def track_agent(self, agent, coordinates, location, frame=-1, time_stamp=None):
         if not self.active_episode():
             return Result(1, "there is not any active episode")
         if agent in self.agents_locations and self.agents_locations[agent] == coordinates:
@@ -73,7 +57,9 @@ class Experiment:
             return Result(0, "Coordinates correspond to an occluded cell")
         else:
             self.agents_locations[agent] = coordinates
-            step = {"time_stamp": (datetime.now()-self.current_episode_start_time).total_seconds(), "agent_name": agent, "coordinates": coordinates, "frame": frame}
+            if time_stamp is None:
+                time_stamp = (datetime.now() - self.current_episode_start_time).total_seconds()
+            step = {"time_stamp": time_stamp, "agent_name": agent, "coordinates": coordinates, "location": location, "frame": frame}
             self.episodes[-1]["trajectories"].append(step)
             if self.check:
                 if agent == "mouse" and coordinates != {"x": -20, "y": 0}:
@@ -120,9 +106,8 @@ class Experiment:
 
     def experiment_ended(self):
         self.finish_episode()
-        self.tracker.write("exit")
         self.end_time = datetime.now()
-        self.write()
+        self.active = False
 
     def finish(self):
         self.active = False

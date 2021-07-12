@@ -1,5 +1,7 @@
+import os
 
-console_history_file_path = "~.console_history"
+console_history_file_path = os.getenv("HOME")+"/.console_history"
+
 def console_input(title):
     import readchar
     import sys

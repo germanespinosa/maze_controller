@@ -100,6 +100,9 @@ class Console:
     def start_server(self):
         self.console_output(self.habitat_remote.start_server())
 
+    def update_background(self):
+        self.console_output(self.habitat_remote.update_background())
+
     def test_feeder(self, feeder_number, duration, repetitions, wait_time):
         self.console_output(self.habitat_remote.test_feeder(feeder_number, duration, repetitions, wait_time))
 
@@ -107,9 +110,6 @@ class Console:
         self.console_output(self.habitat_remote.finish_experiment())
 
     def end(self):
-        self.habitat_remote.finish_experiment()
-        self.habitat_remote.feeder_reached(2)
-        self.habitat_remote.feeder_reached(1)
         self.console_output(self.habitat_remote.end())
         quit()
 
@@ -121,6 +121,9 @@ class Console:
 
     def enable_feeder (self, feeder_number):
         self.console_output(self.habitat_remote.enable_feeder(feeder_number))
+
+    def disable_feeder (self, feeder_number):
+        self.console_output(self.habitat_remote.disable_feeder(feeder_number))
 
     def calibrate_door(self, door_number, direction, opening_time, closing_time):
         self.console_output(self.habitat_remote.calibrate_door(door_number, direction, opening_time, closing_time))

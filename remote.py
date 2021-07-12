@@ -18,6 +18,9 @@ class Remote:
     def enable_feeder(self, n):
         return self.call("enable_feeder", [n])
 
+    def disable_feeder(self, n):
+        return self.call("disable_feeder", [n])
+
     def test_feeder(self, feeder_number, duration, repetitions, wait_time):
         return self.call("test_feeder", [feeder_number,duration, repetitions, wait_time])
 
@@ -50,6 +53,9 @@ class Remote:
 
     def start_experiment(self, experiment_name, world_name, duration=0):
         return self.call("start_experiment", [experiment_name, world_name, duration])
+
+    def update_background(self):
+        return self.call("update_background")
 
     def finish_experiment(self):
         return self.call("finish_experiment")
