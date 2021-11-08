@@ -37,13 +37,12 @@ class Server:
             wait_time = int(qs[4])
             return habitat.test_feeder(feeder_number, duration, repetitions, wait_time).json()
         elif command == "start_experiment":
-            experiment_name = qs[1]
-            world_name = qs[2]
-            if len(qs) > 3 and qs[3].isnumeric():
-                duration = int(qs[3])
-                return habitat.start_experiment(experiment_name, world_name, duration).json()
-            else:
-                return habitat.start_experiment(experiment_name, world_name).json()
+            subject_name = qs[1]
+            experiment_name = qs[2]
+            occlusions = qs[3]
+            duration = int(qs[4])
+            sufix = qs[5]
+            return habitat.start_experiment(subject_name, experiment_name, occlusions, duration, sufix).json()
         elif command == "finish_experiment":
             return habitat.finish_experiment().json()
         elif command == "update_background":

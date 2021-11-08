@@ -51,8 +51,8 @@ class Remote:
     def feeder_reached(self, feeder_number):
         return self.call("feeder_reached", [feeder_number])
 
-    def start_experiment(self, experiment_name, world_name, duration=0):
-        return self.call("start_experiment", [experiment_name, world_name, duration])
+    def start_experiment(self, subject_name, experiment_name, occlusions, duration=0, sufix=""):
+        return self.call("start_experiment", [subject_name, experiment_name, occlusions, duration, sufix])
 
     def update_background(self):
         return self.call("update_background")

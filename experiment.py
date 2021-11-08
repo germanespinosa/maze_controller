@@ -5,12 +5,15 @@ from world import World
 from map import Map
 
 class Experiment:
-    def __init__(self, name="", world_name="", duration_minutes=0):
+    def __init__(self, subject_name="", name="", occlusions="", duration_minutes=0, suffix=""):
+        self.subject_name = subject_name
+        self.occlusions = occlusions
+        self.suffix = suffix
         self.name = name
         self.active = False
-        if world_name != "":
-            self.world = World("hexa_" + world_name)
-            self.map = Map(self.world)
+        # if world_name != "":
+        #     self.world = World("hexa_" + world_name)
+        #     self.map = Map(self.world)
         self.duration = duration_minutes * 60
         self.start_time = datetime.now()
         self.end_time = None
@@ -30,7 +33,7 @@ class Experiment:
         self.agents_locations = {}
         self.current_episode_start_time = datetime.now()
         self.episodes.append({"trajectories": [], "start_time": str(self.current_episode_start_time), "time_stamp": ( self.current_episode_start_time-self.start_time).total_seconds()})
-        return Result(0, "episode %d started" % len(self.episodes))
+        return Result(0, "episode %d started" % (len(self.episodes)-1))
 
     def write(self):
         e = {"name": self.name, "start_time": str(self.start_time), "duration": self.duration}
@@ -46,20 +49,18 @@ class Experiment:
         self.episodes[-1]["end_time"] = str(datetime.now())
         self.current_episode_start_time = None
         self.write()
-        return Result(0, "episode %d finished" % len(self.episodes))
+        return Result(0, "episode %d finished" % (len(self.episodes)-1))
 
-    def track_agent(self, agent, coordinates, location, frame=-1, time_stamp=None):
+
+
+    def track_agent(self, agent, coordinates, location, rotation=0, frame=-1, time_stamp=None, data=""):
         if not self.active_episode():
             return Result(1, "there is not any active episode")
-        if agent in self.agents_locations and self.agents_locations[agent] == coordinates:
-            return Result (1, "duplicated coordinates given")
-        if self.world and self.map.cell(coordinates)["occluded"]:
-            return Result(0, "Coordinates correspond to an occluded cell")
         else:
             self.agents_locations[agent] = coordinates
             if time_stamp is None:
                 time_stamp = (datetime.now() - self.current_episode_start_time).total_seconds()
-            step = {"time_stamp": time_stamp, "agent_name": agent, "coordinates": coordinates, "location": location, "frame": frame}
+            step = {"time_stamp": time_stamp, "agent_name": agent, "coordinates": coordinates, "location": location, "rotation": rotation, "frame": frame, "data": data}
             self.episodes[-1]["trajectories"].append(step)
             if self.check:
                 if agent == "mouse" and coordinates != {"x": -20, "y": 0}:
@@ -94,7 +95,7 @@ class Experiment:
                     message = "experiment %s finishing" % self.name
                 else:
                     message = "experiment %s in progress" % self.name
-                    message += "(%d seconds remaining)" % n
+                    message += "(%d minutes remaining)" % round(n/60)
             else:
                 message = "experiment %s in progress" % self.name
         else:

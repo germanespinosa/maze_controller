@@ -93,9 +93,13 @@ class Console:
     def close_door(self, door_number):
         self.console_output(self.habitat_remote.close_door(door_number))
 
-    def start_experiment(self, subject_name, world_name, duration, suffix=""):
-        experiment_name = str(datetime.now().year) + str("%02d" % datetime.now().month) + str("%02d" % datetime.now().day) + "_" + str("%02d" % datetime.now().hour) + str("%02d" % datetime.now().minute) + "_" + subject_name + "_" + world_name + ("_" + suffix if suffix != "" else "")
-        self.console_output(self.habitat_remote.start_experiment(experiment_name, world_name, duration))
+    def start_experiment(self):
+        subject_name = input("subject name: ")
+        occlusions = input("occlusions configuration: ")
+        duration = int(input("duration (in minutes): "))
+        suffix = input("experiment identifier: ")
+        experiment_name = str(datetime.now().year) + str("%02d" % datetime.now().month) + str("%02d" % datetime.now().day) + "_" + str("%02d" % datetime.now().hour) + str("%02d" % datetime.now().minute) + "_" + subject_name + "_" + occlusions + ("_" + suffix if suffix != "" else "")
+        self.console_output(self.habitat_remote.start_experiment(subject_name, experiment_name, occlusions, duration, suffix))
 
     def start_server(self):
         self.console_output(self.habitat_remote.start_server())
