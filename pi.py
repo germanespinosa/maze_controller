@@ -8,12 +8,14 @@ class Pi:
     def get(self, action, params=[]):
         return Call.get(self.address, action, params)
 
+    @staticmethod
     def get_addresses():
         addresses = []
         with open("pis", "r") as f:
             addresses = json.load(f)
         return addresses
 
+    @staticmethod
     def get_pis():
         pis = []
         for address in Pi.get_addresses():

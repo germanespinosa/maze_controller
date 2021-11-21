@@ -1,15 +1,16 @@
-from experiment import Experiment
 from console_input import console_input
-import time
 from console import Console
 
-time.sleep(2)
-print("Maze controller console")
+print("Habitat controller console")
 print("-----------------------")
 print("type help for more information on available commands")
 commands = Console()
-#commands.process_command("start_server")
 cmd = ""
+commands.process_command("connect_tracking")
 while cmd != "end":
-    cmd = console_input("maze:")
-    commands.process_command(cmd)
+    cmd = console_input("habitat:")
+    r = commands.process_command(cmd)
+    if r.code == 0:
+        print(r.message)
+    else:
+        commands.print_error(r.message)

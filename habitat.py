@@ -1,40 +1,31 @@
+# install cellworld_py
+import httpimport
+with httpimport.remote_repo(["agent_tracking"], "https://raw.githubusercontent.com/germanespinosa/agent_tracking/master/python/"):
+    from agent_tracking import Agent_tracking
+
 import os
-import json
+from threading import Thread
 from rest import Result
-from experiment import Experiment
+from experiment_control import Experiment_control
 from doors import Doors
 from feeders import Feeders
 from pi import Pi
-from agent_tracking import Agent_tracking
-from datetime import datetime
+
 
 class Habitat:
     def __init__(self):
         self.videos_folder = "/maze/controller/videos"
         self.current_experiment_video_folder = ""
         self.robot_controller_path = "/maze/agent_tracking/cmake-build-release/robot_controller"
-        self.experiment = Experiment()
+        self.experiment_control = Experiment_control()
         self.doors = Doors()
         self.feeders = Feeders()
         self.door_2_open = False
-        self.tracker = Agent_tracking("127.0.0.1", 4000, self.process_tracking)
+        self.tracker = Agent_tracking()
 
-    def process_robot_controller(self, content):
-        pass
-
-    def process_tracking(self, content):
-        try:
-            tracking = json.loads(content)
-            frame = tracking["frame"]
-            time_stamp = tracking["time_stamp"]
-            coordinates = tracking["coordinates"]
-            agent = tracking["agent_name"]
-            location = tracking["location"]
-            rotation = tracking["rotation"]
-            data = tracking["data"]
-            self.experiment.track_agent(agent, coordinates, location, rotation, frame, time_stamp, data)
-        except:
-            pass
+    def process_tracking(self, step):
+        if self.experiment_control.track_agent(step) and self.door_2_open:
+            Thread(target=self.doors.close, args=[2]).start()
 
     def enable_feeder(self, n):
         return self.feeders.enable(n)
@@ -54,7 +45,7 @@ class Habitat:
         return Result(0, "good bye!")
 
     def status(self):
-        s = self.experiment.status()
+        s = self.experiment_control.status()
         if s.code == 0:
             message = s.message
             for pi in Pi.get_pis():
@@ -75,56 +66,54 @@ class Habitat:
         if feeder_number not in [1, 2]:
             return Result(1, "wrong feeder number (%d)" % feeder_number)
         if feeder_number == 1:
-            if not self.experiment.is_active():
-                self.doors.close(1)
-                self.doors.close(2)
-                self.doors.close(0)
-                self.doors.close(3)
-                return self.experiment.experiment_ended()
+            if not self.experiment_control.experiment:
+                Thread(target=self.doors.close, args=[0]).start()
+                Thread(target=self.doors.close, args=[1]).start()
+                Thread(target=self.doors.close, args=[2]).start()
+                Thread(target=self.doors.close, args=[3]).start()
+                return Result(0, "All doors closed")
             else:
-                episode_number = len(self.experiment.episodes)
-                current_episode_video_folder = self.current_experiment_video_folder + "/" + self.experiment.name + "_ep" + ('%02d' % episode_number)
+                episode_number = len(self.experiment_control.experiment.episodes)
+                current_episode_video_folder = self.current_experiment_video_folder + "/" + self.experiment_control.experiment.name + "_ep" + ('%02d' % episode_number)
                 if not os.path.exists(current_episode_video_folder):
                     os.makedirs(current_episode_video_folder)
-
-                self.tracker.new_episode(self.subject_name, self.sufix, episode_number, self.occlusions, current_episode_video_folder)
-                r = self.experiment.start_episode()
-                self.experiment.check = self.doors.close
-                self.doors.close(1)
-                self.doors.open(2)
-                self.doors.close(0)
-                self.doors.open(3)
+                self.tracker.new_episode(self.subject_name, self.sufix, episode_number, self.occlusions, current_episode_video_folder, True, self.process_tracking)
+                self.door_2_open = True
+                r = self.experiment_control.start_episode()
+                Thread(target=self.doors.close, args=[1]).start()
+                Thread(target=self.doors.open, args=[2]).start()
+                Thread(target=self.doors.close, args=[0]).start()
+                Thread(target=self.doors.open, args=[3]).start()
                 self.feeders.enable(2)
                 return r
         else:
-            r = self.experiment.finish_episode()
+            r = self.experiment_control.finish_episode()
             self.tracker.end_episode()
-            self.doors.close(3)
-            self.doors.open(0)
-            self.doors.close(2)
-            self.doors.open(1)
+            Thread(target=self.doors.close, args=[3]).start()
+            Thread(target=self.doors.open, args=[0]).start()
+            Thread(target=self.doors.close, args=[2]).start()
+            Thread(target=self.doors.open, args=[1]).start()
             self.feeders.enable(1)
+            self.tracker.reset_cameras()
             return r
 
-    def start_experiment(self, subject_name, experiment_name, occlusions, duration=0, suffix=""):
-        self.experiment = Experiment(subject_name, experiment_name, occlusions, duration, suffix)
-        self.experiment.start()
+    def start_experiment(self, subject_name, occlusions, duration=0, suffix=""):
+        res = self.experiment_control.new_experiment(subject_name, occlusions, duration, suffix)
+        if res.code != 0:
+            return res
+        self.tracker.new_experiment(self.experiment_control.experiment.name)
         self.subject_name = subject_name
         self.sufix = suffix
         self.occlusions = occlusions
-        if experiment_name != "":
-            self.current_experiment_video_folder = self.videos_folder + "/" + experiment_name
-            if not os.path.exists(self.current_experiment_video_folder):
-                os.makedirs(self.current_experiment_video_folder)
-        message = "experiment '%s'" % experiment_name
-        if duration > -1:
-            message += " for %d minutes" % duration
-        self.doors.close(0)
-        self.doors.close(1)
-        self.doors.close(2)
-        self.doors.close(3)
+        self.current_experiment_video_folder = self.videos_folder + "/" + self.experiment_control.experiment.name
+        if not os.path.exists(self.current_experiment_video_folder):
+            os.makedirs(self.current_experiment_video_folder)
+        Thread(target=self.doors.close, args=[0]).start()
+        Thread(target=self.doors.close, args=[1]).start()
+        Thread(target=self.doors.close, args=[2]).start()
+        Thread(target=self.doors.close, args=[3]).start()
         self.feeders.enable(1)
-        return Result(0, message)
+        return res
 
     def test_feeder(self, feeder_number, duration, repetitions, wait_time):
         return self.feeders.test(feeder_number, duration, repetitions, wait_time)
@@ -145,13 +134,22 @@ class Habitat:
     def finish_experiment(self):
         return self.experiment.finish()
 
-    def track(self, agent, x, y): # do better
-        return self.experiment.track_agent(agent, {"x": x, "y": y}, {"x": 0, "y": 0})
-
     def test_door(self, door_number, repetitions):
         return self.doors.test_door(door_number,repetitions)
 
-    def end(self):
-        pass
+    @staticmethod
+    def show_occlusions(occlusions_configuration):
+        if habitat.tracker.show_occlusions(occlusions_configuration):
+            return Result(0, "Occlusions updated")
+        else:
+            return Result(1, "Failed to update occlusions")
+
+    @staticmethod
+    def hide_occlusions():
+        if habitat.tracker.hide_occlusions():
+            return Result(0, "Occlusions updated")
+        else:
+            return Result(1, "Failed to update occlusions")
+
 
 habitat = Habitat()

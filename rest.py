@@ -24,6 +24,6 @@ class Result:
         return self.json()
 
 class Call:
-    def get(address, action, params = []):
+    def get(address, action, params=[]):
         url = "http://" + address + "/" + action + "/" + "/".join([str(p) for p in params])
         return Result.from_response(requests.get(url))

@@ -1,13 +1,19 @@
-from rest import Result
+# install cellworld_py
+import httpimport
+with httpimport.remote_repo(["cellworld_py_setup"], "https://raw.githubusercontent.com/germanespinosa/cellworld_py/master/"):
+    import cellworld_py_setup
+cellworld_py_setup.install(version="1.1", force=True)
+
+
 from habitat import habitat
+from rest import Result
 import web
 
-urls = (
-    '/(.*)', 'Server'
-)
+urls = ('/(.*)', 'Server')
+
 app = web.application(urls, globals())
 
-print (habitat.current_experiment_video_folder)
+print(habitat.current_experiment_video_folder)
 
 class Server:
 
@@ -30,6 +36,11 @@ class Server:
         elif command == "feeder_reached":
             feeder_number = int(qs[1])
             return habitat.feeder_reached(feeder_number).json()
+        elif command == "show_occlusions":
+            occlusions_configuration = qs[1]
+            return habitat.show_occlusions(occlusions_configuration).json()
+        elif command == "hide_occlusions":
+            return habitat.hide_occlusions().json()
         elif command == "test_feeder":
             feeder_number = int(qs[1])
             duration = int(qs[2])
@@ -38,13 +49,14 @@ class Server:
             return habitat.test_feeder(feeder_number, duration, repetitions, wait_time).json()
         elif command == "start_experiment":
             subject_name = qs[1]
-            experiment_name = qs[2]
-            occlusions = qs[3]
-            duration = int(qs[4])
-            sufix = qs[5]
-            return habitat.start_experiment(subject_name, experiment_name, occlusions, duration, sufix).json()
+            occlusions = qs[2]
+            duration = int(qs[3]) * 60
+            suffix = qs[4]
+            return habitat.start_experiment(subject_name, occlusions, duration, suffix).json()
         elif command == "finish_experiment":
             return habitat.finish_experiment().json()
+        elif command == "connect_tracking":
+            return habitat.connect_tracking().json()
         elif command == "update_background":
             return habitat.update_background().json()
         elif command == "save_doors_calibration":
@@ -61,18 +73,14 @@ class Server:
             opening_time = float(qs[3])
             closing_time = float(qs[4])
             return habitat.calibrate_door (door_number, direction, opening_time, closing_time)
-        elif command == "track":
-            agent = qs[1]
-            x = int(qs[2])
-            y = int(qs[3])
-            return habitat.track(agent, x, y).json()
         elif command == "end":
-            habitat.end()
             app.stop()
             return Result(0, "good bye!").json()
         elif command == "status":
             return habitat.status().json()
         else:
             return Result(1, "unknown command").json()
+
+
 if __name__ == "__main__":
     app.run()
