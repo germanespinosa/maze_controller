@@ -59,3 +59,10 @@ class Start_experiment_parameters(Json_object):
         self.occlusions_configuration = occlusions_configuration
         self.duration = duration
         self.suffix = suffix
+
+
+class Pi_status_result(Json_object):
+    def __init__(self, feeder_enabled=False, door_status=Json_list(allowedType=str)):
+        self.feeder_enable = feeder_enabled
+        self.door_status = door_status
+
