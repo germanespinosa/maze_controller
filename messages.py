@@ -1,4 +1,4 @@
-from cellworld_py import *
+from cellworld_py import Json_object, Json_list
 
 
 class Enable_feeder_parameters(Json_object):
@@ -17,9 +17,9 @@ class Feeder_reached_parameters(Json_object):
 
 
 class Test_feeder_parameters(Json_object):
-    def __init__(self, feeder_number=0, duration=0, repetitions=0, wait_time=0):
+    def __init__(self, feeder_number=0, feeding_time=0, repetitions=0, wait_time=0):
         self.feeder_number = feeder_number
-        self.duration = duration
+        self.feeding_time = feeding_time
         self.repetitions = repetitions
         self.wait_time = wait_time
 
@@ -32,6 +32,12 @@ class Open_door_parameters(Json_object):
 class Close_door_parameters(Json_object):
     def __init__(self, door_number=0):
         self.door_number = door_number
+
+
+class Calibrate_feeder(Json_object):
+    def __init__(self, feeder_number=0, feeding_time=0.0):
+        self.feeder_number = feeder_number
+        self.feeding_time = feeding_time
 
 
 class Calibrate_door_parameters(Json_object):
@@ -61,8 +67,22 @@ class Start_experiment_parameters(Json_object):
         self.suffix = suffix
 
 
-class Pi_status_result(Json_object):
-    def __init__(self, feeder_enabled=False, door_status=Json_list(allowedType=str)):
+class Door_status(Json_object):
+    def __init__(self, number=0, direction=0, opening_time=0.0, closing_time=0.0, status=0):
+        self.number = number
+        self.direction = direction
+        self.opening_time = opening_time
+        self.closing_time = closing_time
+        self.status = status
+
+
+class Door_status_list(Json_list):
+    def __init__(self, iterable=None):
+        Json_list.__init__(self, iterable, allowedType=Door_status)
+
+
+class Pi_status(Json_object):
+    def __init__(self, feeder_enabled=False, door_status_list=Door_status_list()):
         self.feeder_enable = feeder_enabled
-        self.door_status = door_status
+        self.door_status_list = door_status_list
 
